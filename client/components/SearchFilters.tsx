@@ -54,7 +54,7 @@ export default function SearchFilters({
 
       {/* Genre Filter */}
       <div className="w-full sm:w-48">
-        <Select value={selectedGenre} onValueChange={onGenreChange}>
+        <Select value={selectedGenre || 'all'} onValueChange={onGenreChange}>
           <SelectTrigger className="focus-ring">
             <SelectValue placeholder="All Genres" />
           </SelectTrigger>
