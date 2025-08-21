@@ -11,6 +11,7 @@ import {
   getStats,
   seedDatabase,
 } from "./routes/books";
+import { connectToDatabase } from "./config/database";
 
 export function createServer() {
   const app = express();
