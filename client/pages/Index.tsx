@@ -128,7 +128,7 @@ export default function Index() {
   };
 
   const handleGenreChange = (value: string) => {
-    setSelectedGenre(value);
+    setSelectedGenre(value === 'all' ? '' : value);
     setCurrentPage(1);
   };
 
