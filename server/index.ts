@@ -11,9 +11,13 @@ import {
   getStats,
   seedDatabase,
 } from "./routes/books";
+import { connectToDatabase } from "./config/database";
 
 export function createServer() {
   const app = express();
+
+  // Initialize database connection
+  connectToDatabase().catch(console.error);
 
   // Middleware
   app.use(cors());

@@ -1,130 +1,69 @@
 import { RequestHandler } from "express";
+import { Book, IBook } from "../models/Book";
+import { connectToDatabase } from "../config/database";
 
-// Mock database for books
-interface Book {
-  id: string;
-  title: string;
-  author: string;
-  isbn: string;
-  publishedDate: string;
-  genre: string;
-  description: string;
-  price: number;
-  pages: number;
-  language: string;
-  inStock: boolean;
-  rating: number;
-  coverImage?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// In-memory storage (replace with real database in production)
-let books: Book[] = [
-  {
-    id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    isbn: "978-0-7432-7356-5",
-    publishedDate: "1925-04-10",
-    genre: "Classic Literature",
-    description:
-      "A classic American novel about the Jazz Age and the American Dream.",
-    price: 12.99,
-    pages: 180,
-    language: "English",
-    inStock: true,
-    rating: 4.2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    title: "1984",
-    author: "George Orwell",
-    isbn: "978-0-452-28423-4",
-    publishedDate: "1949-06-08",
-    genre: "Dystopian Fiction",
-    description:
-      "A dystopian social science fiction novel about totalitarian control.",
-    price: 13.99,
-    pages: 328,
-    language: "English",
-    inStock: true,
-    rating: 4.7,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    isbn: "978-0-14-143951-8",
-    publishedDate: "1813-01-28",
-    genre: "Romance",
-    description: "A romantic novel of manners written by Jane Austen.",
-    price: 11.99,
-    pages: 432,
-    language: "English",
-    inStock: false,
-    rating: 4.5,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-let nextId = 4;
+// Ensure database connection before handling requests
+const ensureDbConnection = async () => {
+  await connectToDatabase();
+};
 
 // Get all books with pagination and filtering
-export const getAllBooks: RequestHandler = (req, res) => {
+export const getAllBooks: RequestHandler = async (req, res) => {
   try {
+    await ensureDbConnection();
+
     const { page = "1", limit = "12", search, genre } = req.query;
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
 
-    let filteredBooks = [...books];
+    // Build query
+    let query: any = {};
 
     // Apply search filter
     if (search) {
-      const searchTerm = (search as string).toLowerCase();
-      filteredBooks = filteredBooks.filter(
-        (book) =>
-          book.title.toLowerCase().includes(searchTerm) ||
-          book.author.toLowerCase().includes(searchTerm) ||
-          book.description.toLowerCase().includes(searchTerm),
-      );
+      const searchTerm = search as string;
+      query.$or = [
+        { title: { $regex: searchTerm, $options: "i" } },
+        { author: { $regex: searchTerm, $options: "i" } },
+        { description: { $regex: searchTerm, $options: "i" } },
+      ];
     }
 
     // Apply genre filter
     if (genre && genre !== "") {
-      filteredBooks = filteredBooks.filter((book) => book.genre === genre);
+      query.genre = genre;
     }
 
-    // Calculate pagination
-    const totalBooks = filteredBooks.length;
+    // Get total count for pagination
+    const totalBooks = await Book.countDocuments(query);
     const totalPages = Math.ceil(totalBooks / limitNum);
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
 
-    const paginatedBooks = filteredBooks.slice(startIndex, endIndex);
+    // Get paginated results
+    const books = await Book.find(query)
+      .sort({ createdAt: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
     res.json({
-      books: paginatedBooks,
+      books,
       totalBooks,
       totalPages,
       currentPage: pageNum,
       hasMore: pageNum < totalPages,
     });
   } catch (error) {
+    console.error("Error fetching books:", error);
     res.status(500).json({ error: "Failed to fetch books" });
   }
 };
 
 // Get single book by ID
-export const getBookById: RequestHandler = (req, res) => {
+export const getBookById: RequestHandler = async (req, res) => {
   try {
+    await ensureDbConnection();
+
     const { id } = req.params;
-    const book = books.find((b) => b.id === id);
+    const book = await Book.findById(id);
 
     if (!book) {
       return res.status(404).json({ error: "Book not found" });
@@ -132,13 +71,16 @@ export const getBookById: RequestHandler = (req, res) => {
 
     res.json(book);
   } catch (error) {
+    console.error("Error fetching book:", error);
     res.status(500).json({ error: "Failed to fetch book" });
   }
 };
 
 // Create new book
-export const createBook: RequestHandler = (req, res) => {
+export const createBook: RequestHandler = async (req, res) => {
   try {
+    await ensureDbConnection();
+
     const {
       title,
       author,
@@ -152,8 +94,7 @@ export const createBook: RequestHandler = (req, res) => {
       inStock = true,
     } = req.body;
 
-    const newBook: Book = {
-      id: nextId.toString(),
+    const newBook = new Book({
       title,
       author,
       isbn,
@@ -165,29 +106,26 @@ export const createBook: RequestHandler = (req, res) => {
       language,
       inStock: inStock === "true" || inStock === true,
       rating: Math.round((Math.random() * 2 + 3) * 10) / 10, // Random rating 3.0-5.0
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    });
 
-    books.push(newBook);
-    nextId++;
-
-    res.status(201).json(newBook);
+    const savedBook = await newBook.save();
+    res.status(201).json(savedBook);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create book" });
+    console.error("Error creating book:", error);
+    if (error.code === 11000) {
+      res.status(400).json({ error: "Book with this ISBN already exists" });
+    } else {
+      res.status(500).json({ error: "Failed to create book" });
+    }
   }
 };
 
 // Update book
-export const updateBook: RequestHandler = (req, res) => {
+export const updateBook: RequestHandler = async (req, res) => {
   try {
+    await ensureDbConnection();
+
     const { id } = req.params;
-    const bookIndex = books.findIndex((b) => b.id === id);
-
-    if (bookIndex === -1) {
-      return res.status(404).json({ error: "Book not found" });
-    }
-
     const {
       title,
       author,
@@ -201,59 +139,79 @@ export const updateBook: RequestHandler = (req, res) => {
       inStock,
     } = req.body;
 
-    books[bookIndex] = {
-      ...books[bookIndex],
-      title: title || books[bookIndex].title,
-      author: author || books[bookIndex].author,
-      isbn: isbn || books[bookIndex].isbn,
-      publishedDate: publishedDate || books[bookIndex].publishedDate,
-      genre: genre || books[bookIndex].genre,
-      description: description || books[bookIndex].description,
-      price: price ? parseFloat(price) : books[bookIndex].price,
-      pages: pages ? parseInt(pages) : books[bookIndex].pages,
-      language: language || books[bookIndex].language,
-      inStock:
-        inStock !== undefined
-          ? inStock === "true" || inStock === true
-          : books[bookIndex].inStock,
-      updatedAt: new Date().toISOString(),
-    };
+    const updateData: Partial<IBook> = {};
 
-    res.json(books[bookIndex]);
+    if (title) updateData.title = title;
+    if (author) updateData.author = author;
+    if (isbn) updateData.isbn = isbn;
+    if (publishedDate) updateData.publishedDate = publishedDate;
+    if (genre) updateData.genre = genre;
+    if (description) updateData.description = description;
+    if (price) updateData.price = parseFloat(price);
+    if (pages) updateData.pages = parseInt(pages);
+    if (language) updateData.language = language;
+    if (inStock !== undefined)
+      updateData.inStock = inStock === "true" || inStock === true;
+
+    const updatedBook = await Book.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedBook) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+
+    res.json(updatedBook);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update book" });
+    console.error("Error updating book:", error);
+    if (error.code === 11000) {
+      res.status(400).json({ error: "Book with this ISBN already exists" });
+    } else {
+      res.status(500).json({ error: "Failed to update book" });
+    }
   }
 };
 
 // Delete book
-export const deleteBook: RequestHandler = (req, res) => {
+export const deleteBook: RequestHandler = async (req, res) => {
   try {
-    const { id } = req.params;
-    const bookIndex = books.findIndex((b) => b.id === id);
+    await ensureDbConnection();
 
-    if (bookIndex === -1) {
+    const { id } = req.params;
+    const deletedBook = await Book.findByIdAndDelete(id);
+
+    if (!deletedBook) {
       return res.status(404).json({ error: "Book not found" });
     }
 
-    books.splice(bookIndex, 1);
     res.json({ message: "Book deleted successfully" });
   } catch (error) {
+    console.error("Error deleting book:", error);
     res.status(500).json({ error: "Failed to delete book" });
   }
 };
 
 // Get stats
-export const getStats: RequestHandler = (req, res) => {
+export const getStats: RequestHandler = async (req, res) => {
   try {
-    const totalBooks = books.length;
-    const totalAuthors = new Set(books.map((book) => book.author)).size;
-    const totalGenres = new Set(books.map((book) => book.genre)).size;
+    await ensureDbConnection();
+
+    const totalBooks = await Book.countDocuments();
+    const totalAuthors = await Book.distinct("author").then(
+      (authors) => authors.length,
+    );
+    const totalGenres = await Book.distinct("genre").then(
+      (genres) => genres.length,
+    );
+
+    const avgRatingResult = await Book.aggregate([
+      { $group: { _id: null, averageRating: { $avg: "$rating" } } },
+    ]);
+
     const averageRating =
-      totalBooks > 0
-        ? Math.round(
-            (books.reduce((sum, book) => sum + book.rating, 0) / totalBooks) *
-              10,
-          ) / 10
+      avgRatingResult.length > 0
+        ? Math.round(avgRatingResult[0].averageRating * 10) / 10
         : 0;
 
     res.json({
@@ -263,16 +221,59 @@ export const getStats: RequestHandler = (req, res) => {
       averageRating,
     });
   } catch (error) {
+    console.error("Error fetching stats:", error);
     res.status(500).json({ error: "Failed to fetch stats" });
   }
 };
 
 // Seed database with sample data
-export const seedDatabase: RequestHandler = (req, res) => {
+export const seedDatabase: RequestHandler = async (req, res) => {
   try {
-    const sampleBooks: Book[] = [
+    await ensureDbConnection();
+
+    const sampleBooks = [
       {
-        id: nextId.toString(),
+        title: "The Great Gatsby",
+        author: "F. Scott Fitzgerald",
+        isbn: "978-0-7432-7356-5",
+        publishedDate: "1925-04-10",
+        genre: "Classic Literature",
+        description:
+          "A classic American novel about the Jazz Age and the American Dream.",
+        price: 12.99,
+        pages: 180,
+        language: "English",
+        inStock: true,
+        rating: 4.2,
+      },
+      {
+        title: "1984",
+        author: "George Orwell",
+        isbn: "978-0-452-28423-4",
+        publishedDate: "1949-06-08",
+        genre: "Dystopian Fiction",
+        description:
+          "A dystopian social science fiction novel about totalitarian control.",
+        price: 13.99,
+        pages: 328,
+        language: "English",
+        inStock: true,
+        rating: 4.7,
+      },
+      {
+        title: "Pride and Prejudice",
+        author: "Jane Austen",
+        isbn: "978-0-14-143951-8",
+        publishedDate: "1813-01-28",
+        genre: "Romance",
+        description: "A romantic novel of manners written by Jane Austen.",
+        price: 11.99,
+        pages: 432,
+        language: "English",
+        inStock: false,
+        rating: 4.5,
+      },
+      {
         title: "To Kill a Mockingbird",
         author: "Harper Lee",
         isbn: "978-0-06-112008-4",
@@ -285,11 +286,8 @@ export const seedDatabase: RequestHandler = (req, res) => {
         language: "English",
         inStock: true,
         rating: 4.8,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       },
       {
-        id: (nextId + 1).toString(),
         title: "The Catcher in the Rye",
         author: "J.D. Salinger",
         isbn: "978-0-316-76948-0",
@@ -301,11 +299,8 @@ export const seedDatabase: RequestHandler = (req, res) => {
         language: "English",
         inStock: true,
         rating: 3.8,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       },
       {
-        id: (nextId + 2).toString(),
         title: "Dune",
         author: "Frank Herbert",
         isbn: "978-0-441-17271-9",
@@ -318,23 +313,28 @@ export const seedDatabase: RequestHandler = (req, res) => {
         language: "English",
         inStock: false,
         rating: 4.6,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       },
     ];
 
-    // Add to existing books instead of replacing
-    sampleBooks.forEach((book) => {
-      if (!books.find((b) => b.isbn === book.isbn)) {
-        books.push(book);
-        nextId++;
+    let addedCount = 0;
+    for (const bookData of sampleBooks) {
+      try {
+        // Check if book with this ISBN already exists
+        const existingBook = await Book.findOne({ isbn: bookData.isbn });
+        if (!existingBook) {
+          await Book.create(bookData);
+          addedCount++;
+        }
+      } catch (error) {
+        console.log(`Skipping duplicate book: ${bookData.title}`);
       }
-    });
+    }
 
     res.json({
-      message: `Database seeded with ${sampleBooks.length} new books`,
+      message: `Database seeded with ${addedCount} new books`,
     });
   } catch (error) {
+    console.error("Error seeding database:", error);
     res.status(500).json({ error: "Failed to seed database" });
   }
 };
