@@ -3,13 +3,31 @@
   functions = "netlify/functions"
   publish = "dist/spa"
 
-
 [functions]
-  external_node_modules = ["express"]
+  external_node_modules = ["mongoose"]
   node_bundler = "esbuild"
-  
+
+# Redirect old API routes to new functions
 [[redirects]]
   force = true
-  from = "/api/*"
+  from = "/api/books/*"
   status = 200
-  to = "/.netlify/functions/api/:splat"
+  to = "/.netlify/functions/books/:splat"
+
+[[redirects]]
+  force = true
+  from = "/api/stats"
+  status = 200
+  to = "/.netlify/functions/stats"
+
+[[redirects]]
+  force = true
+  from = "/api/seed"
+  status = 200
+  to = "/.netlify/functions/seed"
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
