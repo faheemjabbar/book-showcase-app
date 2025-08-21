@@ -1,7 +1,7 @@
-import { Moon, Sun, Book, Plus, Database } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Moon, Sun, Book, Plus, Database } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onAddBook?: () => void;
@@ -9,7 +9,11 @@ interface HeaderProps {
   isConnected?: boolean;
 }
 
-export default function Header({ onAddBook, onSeedDatabase, isConnected }: HeaderProps) {
+export default function Header({
+  onAddBook,
+  onSeedDatabase,
+  isConnected,
+}: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -23,23 +27,29 @@ export default function Header({ onAddBook, onSeedDatabase, isConnected }: Heade
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">BookVault</h1>
-              <p className="text-xs text-muted-foreground">Professional Library Management</p>
+              <p className="text-xs text-muted-foreground">
+                Professional Library Management
+              </p>
             </div>
           </div>
 
           {/* Connection Status */}
           {isConnected !== undefined && (
             <div className="hidden sm:flex items-center space-x-2">
-              <div className={cn(
-                "flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-medium",
-                isConnected 
-                  ? "bg-success/10 text-success border border-success/20" 
-                  : "bg-destructive/10 text-destructive border border-destructive/20"
-              )}>
-                <div className={cn(
-                  "h-2 w-2 rounded-full",
-                  isConnected ? "bg-success" : "bg-destructive"
-                )} />
+              <div
+                className={cn(
+                  "flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-medium",
+                  isConnected
+                    ? "bg-success/10 text-success border border-success/20"
+                    : "bg-destructive/10 text-destructive border border-destructive/20",
+                )}
+              >
+                <div
+                  className={cn(
+                    "h-2 w-2 rounded-full",
+                    isConnected ? "bg-success" : "bg-destructive",
+                  )}
+                />
                 {isConnected ? "Connected" : "Disconnected"}
               </div>
             </div>
@@ -68,7 +78,7 @@ export default function Header({ onAddBook, onSeedDatabase, isConnected }: Heade
                 </Button>
               </>
             )}
-            
+
             {/* Theme Toggle */}
             <Button
               variant="ghost"
@@ -76,7 +86,7 @@ export default function Header({ onAddBook, onSeedDatabase, isConnected }: Heade
               onClick={toggleTheme}
               className="h-9 w-9 p-0"
             >
-              {theme === 'light' ? (
+              {theme === "light" ? (
                 <Moon className="h-4 w-4" />
               ) : (
                 <Sun className="h-4 w-4" />

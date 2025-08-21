@@ -1,6 +1,6 @@
-import { Book, Plus, Database } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Book, Plus, Database } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface EmptyStateProps {
   hasFilters: boolean;
@@ -9,11 +9,11 @@ interface EmptyStateProps {
   onClearFilters?: () => void;
 }
 
-export default function EmptyState({ 
-  hasFilters, 
-  onAddBook, 
+export default function EmptyState({
+  hasFilters,
+  onAddBook,
   onSeedDatabase,
-  onClearFilters 
+  onClearFilters,
 }: EmptyStateProps) {
   return (
     <Card className="border-0 shadow-elegant">
@@ -21,18 +21,17 @@ export default function EmptyState({
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50 mb-6">
           <Book className="h-10 w-10 text-muted-foreground" />
         </div>
-        
+
         <h3 className="text-xl font-semibold text-foreground mb-2">
-          {hasFilters ? 'No books found' : 'No books in your library'}
+          {hasFilters ? "No books found" : "No books in your library"}
         </h3>
-        
+
         <p className="text-muted-foreground mb-8 max-w-md">
-          {hasFilters 
-            ? 'Try adjusting your search criteria or clear filters to see all books.'
-            : 'Get started by adding your first book or populate your library with sample data.'
-          }
+          {hasFilters
+            ? "Try adjusting your search criteria or clear filters to see all books."
+            : "Get started by adding your first book or populate your library with sample data."}
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-3">
           {hasFilters && onClearFilters ? (
             <Button
@@ -51,7 +50,7 @@ export default function EmptyState({
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Book
               </Button>
-              
+
               <Button
                 variant="outline"
                 onClick={onSeedDatabase}

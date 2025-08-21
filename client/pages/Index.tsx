@@ -1,77 +1,79 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { AlertCircle, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-import Header from '@/components/Header';
-import StatsGrid from '@/components/StatsGrid';
-import SearchFilters from '@/components/SearchFilters';
-import BookCard from '@/components/BookCard';
-import EmptyState from '@/components/EmptyState';
-import LoadingState from '@/components/LoadingState';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import Header from "@/components/Header";
+import StatsGrid from "@/components/StatsGrid";
+import SearchFilters from "@/components/SearchFilters";
+import BookCard from "@/components/BookCard";
+import EmptyState from "@/components/EmptyState";
+import LoadingState from "@/components/LoadingState";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-import type { Book, BooksResponse, StatsResponse } from '@shared/api';
+import type { Book, BooksResponse, StatsResponse } from "@shared/api";
 
 // API functions
 const api = {
   books: {
-    getAll: async (params: Record<string, string> = {}): Promise<BooksResponse> => {
+    getAll: async (
+      params: Record<string, string> = {},
+    ): Promise<BooksResponse> => {
       const queryString = new URLSearchParams(params).toString();
       const response = await fetch(`/api/books?${queryString}`);
-      if (!response.ok) throw new Error('Failed to fetch books');
+      if (!response.ok) throw new Error("Failed to fetch books");
       return response.json();
     },
     getOne: async (id: string): Promise<Book> => {
       const response = await fetch(`/api/books/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch book');
+      if (!response.ok) throw new Error("Failed to fetch book");
       return response.json();
     },
     create: async (formData: FormData): Promise<Book> => {
-      const response = await fetch('/api/books', {
-        method: 'POST',
+      const response = await fetch("/api/books", {
+        method: "POST",
         body: formData,
       });
-      if (!response.ok) throw new Error('Failed to create book');
+      if (!response.ok) throw new Error("Failed to create book");
       return response.json();
     },
     update: async (id: string, formData: FormData): Promise<Book> => {
       const response = await fetch(`/api/books/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         body: formData,
       });
-      if (!response.ok) throw new Error('Failed to update book');
+      if (!response.ok) throw new Error("Failed to update book");
       return response.json();
     },
     delete: async (id: string): Promise<{ message: string }> => {
       const response = await fetch(`/api/books/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      if (!response.ok) throw new Error('Failed to delete book');
+      if (!response.ok) throw new Error("Failed to delete book");
       return response.json();
     },
   },
   stats: {
     get: async (): Promise<StatsResponse> => {
-      const response = await fetch('/api/stats');
-      if (!response.ok) throw new Error('Failed to fetch stats');
+      const response = await fetch("/api/stats");
+      if (!response.ok) throw new Error("Failed to fetch stats");
       return response.json();
     },
   },
   seed: async (): Promise<{ message: string }> => {
-    const response = await fetch('/api/seed', {
-      method: 'POST',
+    const response = await fetch("/api/seed", {
+      method: "POST",
     });
-    if (!response.ok) throw new Error('Failed to seed database');
+    if (!response.ok) throw new Error("Failed to seed database");
     return response.json();
   },
 };
 
 export default function Index() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { toast } = useToast();
@@ -83,11 +85,11 @@ export default function Index() {
     error: booksError,
     refetch: refetchBooks,
   } = useQuery({
-    queryKey: ['books', currentPage, searchTerm, selectedGenre],
+    queryKey: ["books", currentPage, searchTerm, selectedGenre],
     queryFn: () => {
       const params: Record<string, string> = {
         page: currentPage.toString(),
-        limit: '12',
+        limit: "12",
       };
       if (searchTerm) params.search = searchTerm;
       if (selectedGenre) params.genre = selectedGenre;
@@ -105,7 +107,7 @@ export default function Index() {
     error: statsError,
     refetch: refetchStats,
   } = useQuery({
-    queryKey: ['stats'],
+    queryKey: ["stats"],
     queryFn: api.stats.get,
     retry: 1,
     onSuccess: () => setIsConnected(true),
@@ -128,13 +130,13 @@ export default function Index() {
   };
 
   const handleGenreChange = (value: string) => {
-    setSelectedGenre(value === 'all' ? '' : value);
+    setSelectedGenre(value === "all" ? "" : value);
     setCurrentPage(1);
   };
 
   const handleClearFilters = () => {
-    setSearchTerm('');
-    setSelectedGenre('');
+    setSearchTerm("");
+    setSelectedGenre("");
     setCurrentPage(1);
   };
 
@@ -142,16 +144,16 @@ export default function Index() {
     try {
       await api.seed();
       toast({
-        title: 'Success!',
-        description: 'Database seeded with sample books.',
+        title: "Success!",
+        description: "Database seeded with sample books.",
       });
       refetchBooks();
       refetchStats();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to seed database. Please check your connection.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to seed database. Please check your connection.",
+        variant: "destructive",
       });
     }
   };
@@ -159,15 +161,15 @@ export default function Index() {
   const handleAddBook = () => {
     // TODO: Open add book modal
     toast({
-      title: 'Coming Soon',
-      description: 'Add book functionality will be implemented next.',
+      title: "Coming Soon",
+      description: "Add book functionality will be implemented next.",
     });
   };
 
   const handleViewBook = async (book: Book) => {
     // TODO: Open book detail modal
     toast({
-      title: 'Book Details',
+      title: "Book Details",
       description: `Viewing "${book.title}" by ${book.author}`,
     });
   };
@@ -175,27 +177,27 @@ export default function Index() {
   const handleEditBook = (book: Book) => {
     // TODO: Open edit book modal
     toast({
-      title: 'Edit Book',
+      title: "Edit Book",
       description: `Editing "${book.title}"`,
     });
   };
 
   const handleDeleteBook = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this book?')) return;
+    if (!window.confirm("Are you sure you want to delete this book?")) return;
 
     try {
       await api.books.delete(id);
       toast({
-        title: 'Success!',
-        description: 'Book deleted successfully.',
+        title: "Success!",
+        description: "Book deleted successfully.",
       });
       refetchBooks();
       refetchStats();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete book. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete book. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -234,7 +236,8 @@ export default function Index() {
               <div>
                 <strong>Backend Server Not Running</strong>
                 <p className="mt-1 text-sm">
-                  The API server is not responding. Make sure your Express server is running.
+                  The API server is not responding. Make sure your Express
+                  server is running.
                 </p>
               </div>
               <Button
@@ -311,7 +314,7 @@ export default function Index() {
                   <div className="flex justify-center items-center space-x-4 mt-8">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                       disabled={currentPage === 1}
                     >
                       Previous
@@ -321,7 +324,11 @@ export default function Index() {
                     </span>
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentPage(p => Math.min(p + 1, booksResponse.totalPages))}
+                      onClick={() =>
+                        setCurrentPage((p) =>
+                          Math.min(p + 1, booksResponse.totalPages),
+                        )
+                      }
                       disabled={currentPage === booksResponse.totalPages}
                     >
                       Next
@@ -334,7 +341,9 @@ export default function Index() {
                 hasFilters={Boolean(searchTerm || selectedGenre)}
                 onAddBook={handleAddBook}
                 onSeedDatabase={handleSeedDatabase}
-                onClearFilters={searchTerm || selectedGenre ? handleClearFilters : undefined}
+                onClearFilters={
+                  searchTerm || selectedGenre ? handleClearFilters : undefined
+                }
               />
             )}
           </section>

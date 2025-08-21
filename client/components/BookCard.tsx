@@ -1,9 +1,9 @@
-import { Star, Eye, Edit, Trash2, Book } from 'lucide-react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import type { Book as BookType } from '@shared/api';
+import { Star, Eye, Edit, Trash2, Book } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import type { Book as BookType } from "@shared/api";
 
 interface BookCardProps {
   book: BookType;
@@ -12,16 +12,21 @@ interface BookCardProps {
   onDelete: (id: string) => void;
 }
 
-export default function BookCard({ book, onView, onEdit, onDelete }: BookCardProps) {
+export default function BookCard({
+  book,
+  onView,
+  onEdit,
+  onDelete,
+}: BookCardProps) {
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
         className={cn(
-          'h-3 w-3',
+          "h-3 w-3",
           i < Math.floor(rating)
-            ? 'text-amber-400 fill-amber-400'
-            : 'text-gray-300 dark:text-gray-600'
+            ? "text-amber-400 fill-amber-400"
+            : "text-gray-300 dark:text-gray-600",
         )}
       />
     ));
@@ -43,18 +48,18 @@ export default function BookCard({ book, onView, onEdit, onDelete }: BookCardPro
               <Book className="h-12 w-12 text-muted-foreground" />
             </div>
           )}
-          
+
           {/* Stock Badge */}
           <Badge
-            variant={book.inStock ? 'default' : 'destructive'}
+            variant={book.inStock ? "default" : "destructive"}
             className={cn(
-              'absolute top-3 right-3 text-xs',
-              book.inStock 
-                ? 'bg-success text-success-foreground' 
-                : 'bg-destructive text-destructive-foreground'
+              "absolute top-3 right-3 text-xs",
+              book.inStock
+                ? "bg-success text-success-foreground"
+                : "bg-destructive text-destructive-foreground",
             )}
           >
-            {book.inStock ? 'In Stock' : 'Out of Stock'}
+            {book.inStock ? "In Stock" : "Out of Stock"}
           </Badge>
         </div>
 
@@ -72,7 +77,9 @@ export default function BookCard({ book, onView, onEdit, onDelete }: BookCardPro
             <div className="flex items-center gap-1">
               {renderStars(book.rating)}
             </div>
-            <span className="text-sm text-muted-foreground">({book.rating})</span>
+            <span className="text-sm text-muted-foreground">
+              ({book.rating})
+            </span>
           </div>
 
           {/* Genre */}
@@ -87,8 +94,12 @@ export default function BookCard({ book, onView, onEdit, onDelete }: BookCardPro
 
           {/* Price */}
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-primary">${book.price}</span>
-            <span className="text-sm text-muted-foreground">{book.pages} pages</span>
+            <span className="text-lg font-bold text-primary">
+              ${book.price}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {book.pages} pages
+            </span>
           </div>
         </div>
       </CardContent>

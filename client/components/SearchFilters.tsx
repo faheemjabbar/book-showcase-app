@@ -1,13 +1,13 @@
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface SearchFiltersProps {
   searchTerm: string;
@@ -18,16 +18,16 @@ interface SearchFiltersProps {
 }
 
 const genres = [
-  'Classic Literature',
-  'Dystopian Fiction',
-  'Romance',
-  'Coming of Age',
-  'Science Fiction',
-  'Mystery',
-  'Fantasy',
-  'Thriller',
-  'Horror',
-  'Historical Fiction',
+  "Classic Literature",
+  "Dystopian Fiction",
+  "Romance",
+  "Coming of Age",
+  "Science Fiction",
+  "Mystery",
+  "Fantasy",
+  "Thriller",
+  "Horror",
+  "Historical Fiction",
 ];
 
 export default function SearchFilters({
@@ -54,7 +54,7 @@ export default function SearchFilters({
 
       {/* Genre Filter */}
       <div className="w-full sm:w-48">
-        <Select value={selectedGenre || 'all'} onValueChange={onGenreChange}>
+        <Select value={selectedGenre || "all"} onValueChange={onGenreChange}>
           <SelectTrigger className="focus-ring">
             <SelectValue placeholder="All Genres" />
           </SelectTrigger>
