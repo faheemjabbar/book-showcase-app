@@ -8,9 +8,11 @@ const connectToDatabase = async () => {
   }
 
   try {
-    const MONGODB_URI =
-      process.env.MONGODB_URI ||
-      "mongodb+srv://bookuser:password7809@cluster0.qbrceig.mongodb.net/bookstore?retryWrites=true&w=majority&appName=Cluster0";
+    const MONGODB_URI = process.env.MONGODB_URI;
+
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
 
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
