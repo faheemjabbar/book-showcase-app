@@ -11,7 +11,7 @@ const ensureDbConnection = async () => {
 export const getAllBooks: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const { page = "1", limit = "12", search, genre } = req.query;
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -23,9 +23,9 @@ export const getAllBooks: RequestHandler = async (req, res) => {
     if (search) {
       const searchTerm = search as string;
       query.$or = [
-        { title: { $regex: searchTerm, $options: 'i' } },
-        { author: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } }
+        { title: { $regex: searchTerm, $options: "i" } },
+        { author: { $regex: searchTerm, $options: "i" } },
+        { description: { $regex: searchTerm, $options: "i" } },
       ];
     }
 
@@ -52,7 +52,7 @@ export const getAllBooks: RequestHandler = async (req, res) => {
       hasMore: pageNum < totalPages,
     });
   } catch (error) {
-    console.error('Error fetching books:', error);
+    console.error("Error fetching books:", error);
     res.status(500).json({ error: "Failed to fetch books" });
   }
 };
@@ -61,7 +61,7 @@ export const getAllBooks: RequestHandler = async (req, res) => {
 export const getBookById: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const { id } = req.params;
     const book = await Book.findById(id);
 
@@ -71,7 +71,7 @@ export const getBookById: RequestHandler = async (req, res) => {
 
     res.json(book);
   } catch (error) {
-    console.error('Error fetching book:', error);
+    console.error("Error fetching book:", error);
     res.status(500).json({ error: "Failed to fetch book" });
   }
 };
@@ -80,7 +80,7 @@ export const getBookById: RequestHandler = async (req, res) => {
 export const createBook: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const {
       title,
       author,
@@ -111,7 +111,7 @@ export const createBook: RequestHandler = async (req, res) => {
     const savedBook = await newBook.save();
     res.status(201).json(savedBook);
   } catch (error) {
-    console.error('Error creating book:', error);
+    console.error("Error creating book:", error);
     if (error.code === 11000) {
       res.status(400).json({ error: "Book with this ISBN already exists" });
     } else {
@@ -124,7 +124,7 @@ export const createBook: RequestHandler = async (req, res) => {
 export const updateBook: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const { id } = req.params;
     const {
       title,
@@ -140,7 +140,7 @@ export const updateBook: RequestHandler = async (req, res) => {
     } = req.body;
 
     const updateData: Partial<IBook> = {};
-    
+
     if (title) updateData.title = title;
     if (author) updateData.author = author;
     if (isbn) updateData.isbn = isbn;
@@ -150,13 +150,13 @@ export const updateBook: RequestHandler = async (req, res) => {
     if (price) updateData.price = parseFloat(price);
     if (pages) updateData.pages = parseInt(pages);
     if (language) updateData.language = language;
-    if (inStock !== undefined) updateData.inStock = inStock === "true" || inStock === true;
+    if (inStock !== undefined)
+      updateData.inStock = inStock === "true" || inStock === true;
 
-    const updatedBook = await Book.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const updatedBook = await Book.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedBook) {
       return res.status(404).json({ error: "Book not found" });
@@ -164,7 +164,7 @@ export const updateBook: RequestHandler = async (req, res) => {
 
     res.json(updatedBook);
   } catch (error) {
-    console.error('Error updating book:', error);
+    console.error("Error updating book:", error);
     if (error.code === 11000) {
       res.status(400).json({ error: "Book with this ISBN already exists" });
     } else {
@@ -177,7 +177,7 @@ export const updateBook: RequestHandler = async (req, res) => {
 export const deleteBook: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const { id } = req.params;
     const deletedBook = await Book.findByIdAndDelete(id);
 
@@ -187,7 +187,7 @@ export const deleteBook: RequestHandler = async (req, res) => {
 
     res.json({ message: "Book deleted successfully" });
   } catch (error) {
-    console.error('Error deleting book:', error);
+    console.error("Error deleting book:", error);
     res.status(500).json({ error: "Failed to delete book" });
   }
 };
@@ -196,18 +196,23 @@ export const deleteBook: RequestHandler = async (req, res) => {
 export const getStats: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const totalBooks = await Book.countDocuments();
-    const totalAuthors = await Book.distinct('author').then(authors => authors.length);
-    const totalGenres = await Book.distinct('genre').then(genres => genres.length);
-    
+    const totalAuthors = await Book.distinct("author").then(
+      (authors) => authors.length,
+    );
+    const totalGenres = await Book.distinct("genre").then(
+      (genres) => genres.length,
+    );
+
     const avgRatingResult = await Book.aggregate([
-      { $group: { _id: null, averageRating: { $avg: '$rating' } } }
+      { $group: { _id: null, averageRating: { $avg: "$rating" } } },
     ]);
-    
-    const averageRating = avgRatingResult.length > 0 
-      ? Math.round(avgRatingResult[0].averageRating * 10) / 10 
-      : 0;
+
+    const averageRating =
+      avgRatingResult.length > 0
+        ? Math.round(avgRatingResult[0].averageRating * 10) / 10
+        : 0;
 
     res.json({
       totalBooks,
@@ -216,7 +221,7 @@ export const getStats: RequestHandler = async (req, res) => {
       averageRating,
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
+    console.error("Error fetching stats:", error);
     res.status(500).json({ error: "Failed to fetch stats" });
   }
 };
@@ -225,7 +230,7 @@ export const getStats: RequestHandler = async (req, res) => {
 export const seedDatabase: RequestHandler = async (req, res) => {
   try {
     await ensureDbConnection();
-    
+
     const sampleBooks = [
       {
         title: "The Great Gatsby",
@@ -233,7 +238,8 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         isbn: "978-0-7432-7356-5",
         publishedDate: "1925-04-10",
         genre: "Classic Literature",
-        description: "A classic American novel about the Jazz Age and the American Dream.",
+        description:
+          "A classic American novel about the Jazz Age and the American Dream.",
         price: 12.99,
         pages: 180,
         language: "English",
@@ -246,7 +252,8 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         isbn: "978-0-452-28423-4",
         publishedDate: "1949-06-08",
         genre: "Dystopian Fiction",
-        description: "A dystopian social science fiction novel about totalitarian control.",
+        description:
+          "A dystopian social science fiction novel about totalitarian control.",
         price: 13.99,
         pages: 328,
         language: "English",
@@ -272,7 +279,8 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         isbn: "978-0-06-112008-4",
         publishedDate: "1960-07-11",
         genre: "Classic Literature",
-        description: "A gripping tale of racial injustice and childhood innocence.",
+        description:
+          "A gripping tale of racial injustice and childhood innocence.",
         price: 14.99,
         pages: 376,
         language: "English",
@@ -298,7 +306,8 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         isbn: "978-0-441-17271-9",
         publishedDate: "1965-08-01",
         genre: "Science Fiction",
-        description: "An epic science fiction novel set on the desert planet Arrakis.",
+        description:
+          "An epic science fiction novel set on the desert planet Arrakis.",
         price: 16.99,
         pages: 688,
         language: "English",
@@ -325,7 +334,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
       message: `Database seeded with ${addedCount} new books`,
     });
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
     res.status(500).json({ error: "Failed to seed database" });
   }
 };

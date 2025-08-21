@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 let isConnected = false;
 
@@ -9,27 +9,27 @@ export async function connectToDatabase() {
 
   try {
     const mongoUri = process.env.MONGODB_URI;
-    
+
     if (!mongoUri) {
-      throw new Error('MONGODB_URI environment variable is not defined');
+      throw new Error("MONGODB_URI environment variable is not defined");
     }
 
     await mongoose.connect(mongoUri);
     isConnected = true;
-    console.log('✅ Connected to MongoDB successfully');
+    console.log("✅ Connected to MongoDB successfully");
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error("❌ MongoDB connection error:", error);
     throw error;
   }
 }
 
 // Handle connection events
-mongoose.connection.on('disconnected', () => {
-  console.log('📡 MongoDB disconnected');
+mongoose.connection.on("disconnected", () => {
+  console.log("📡 MongoDB disconnected");
   isConnected = false;
 });
 
-mongoose.connection.on('error', (error) => {
-  console.error('❌ MongoDB connection error:', error);
+mongoose.connection.on("error", (error) => {
+  console.error("❌ MongoDB connection error:", error);
   isConnected = false;
 });
