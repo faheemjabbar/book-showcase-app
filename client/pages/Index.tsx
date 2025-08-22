@@ -172,27 +172,17 @@ export default function Index() {
   };
 
   const handleAddBook = () => {
-    // TODO: Open add book modal
-    toast({
-      title: "Coming Soon",
-      description: "Add book functionality will be implemented next.",
-    });
+    setIsAddModalOpen(true);
   };
 
   const handleViewBook = async (book: Book) => {
-    // TODO: Open book detail modal
-    toast({
-      title: "Book Details",
-      description: `Viewing "${book.title}" by ${book.author}`,
-    });
+    setSelectedBook(book);
+    setIsDetailModalOpen(true);
   };
 
   const handleEditBook = (book: Book) => {
-    // TODO: Open edit book modal
-    toast({
-      title: "Edit Book",
-      description: `Editing "${book.title}"`,
-    });
+    setSelectedBook(book);
+    setIsEditModalOpen(true);
   };
 
   const handleDeleteBook = async (id: string) => {
