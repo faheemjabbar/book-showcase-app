@@ -44,8 +44,27 @@ export const getAllBooks: RequestHandler = async (req, res) => {
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum);
 
+    // Transform MongoDB documents to include id field
+    const transformedBooks = books.map(book => ({
+      id: book._id.toString(),
+      title: book.title,
+      author: book.author,
+      isbn: book.isbn,
+      publishedDate: book.publishedDate,
+      genre: book.genre,
+      description: book.description,
+      price: book.price,
+      pages: book.pages,
+      language: book.language,
+      inStock: book.inStock,
+      rating: book.rating,
+      coverImage: book.coverImage,
+      createdAt: book.createdAt,
+      updatedAt: book.updatedAt,
+    }));
+
     res.json({
-      books,
+      books: transformedBooks,
       totalBooks,
       totalPages,
       currentPage: pageNum,
