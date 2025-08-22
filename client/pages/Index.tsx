@@ -371,6 +371,28 @@ export default function Index() {
           </section>
         )}
       </main>
+
+      {/* Modals */}
+      <AddBookModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSuccess={handleModalSuccess}
+      />
+
+      <BookDetailModal
+        book={selectedBook}
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+        onEdit={handleEditBook}
+        onDelete={handleDeleteBook}
+      />
+
+      <EditBookModal
+        book={selectedBook}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }
