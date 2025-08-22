@@ -322,6 +322,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: true,
         rating: 4.2,
+        coverImage: "https://books.google.com/books/content?id=iUqOtgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
       {
         title: "1984",
