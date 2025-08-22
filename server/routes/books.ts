@@ -337,6 +337,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: true,
         rating: 4.7,
+        coverImage: "https://books.google.com/books/content?id=kotPYEqx7kMC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
       {
         title: "Pride and Prejudice",
@@ -350,6 +351,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: false,
         rating: 4.5,
+        coverImage: "https://books.google.com/books/content?id=ZwQ_DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
       {
         title: "To Kill a Mockingbird",
@@ -364,6 +366,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: true,
         rating: 4.8,
+        coverImage: "https://books.google.com/books/content?id=PGR2AwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
       {
         title: "The Catcher in the Rye",
@@ -377,6 +380,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: true,
         rating: 3.8,
+        coverImage: "https://books.google.com/books/content?id=PCDengEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
       {
         title: "Dune",
@@ -391,6 +395,7 @@ export const seedDatabase: RequestHandler = async (req, res) => {
         language: "English",
         inStock: false,
         rating: 4.6,
+        coverImage: "https://books.google.com/books/content?id=B1hSG45JCX4C&printsec=frontcover&img=1&zoom=1&source=gbs_api",
       },
     ];
 
