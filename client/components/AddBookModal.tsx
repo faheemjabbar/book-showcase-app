@@ -162,9 +162,37 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
         <DialogHeader>
           <DialogTitle>Add New Book</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new book to your library.
+            Search for a book to auto-fill details, or fill in manually.
           </DialogDescription>
         </DialogHeader>
+
+        {/* Book Search */}
+        <div className="space-y-3 border-b pb-4">
+          <Label htmlFor="search">Search Books (Google Books API)</Label>
+          <div className="flex gap-2">
+            <Input
+              id="search"
+              placeholder="Enter book title, author, or ISBN..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchBooks()}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSearchBooks}
+              disabled={isSearching}
+              className="min-w-[100px]"
+            >
+              {isSearching ? (
+                <BookOpen className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              {isSearching ? "Searching..." : "Search"}
+            </Button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
