@@ -10,8 +10,8 @@ const ensureDbConnection = async () => {
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
   const method = req.method;
-  const pathSegments = url.pathname.split('/').filter(Boolean);
-  
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+
   // Extract book ID if present (for /api/books/:id routes)
   const bookId = pathSegments[2]; // api/books/:id
 
@@ -72,16 +72,19 @@ export default async (req: Request, context: Context) => {
         updatedAt: book.updatedAt,
       }));
 
-      return new Response(JSON.stringify({
-        books: transformedBooks,
-        totalBooks,
-        totalPages,
-        currentPage: page,
-        hasMore: page < totalPages,
-      }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
-      });
+      return new Response(
+        JSON.stringify({
+          books: transformedBooks,
+          totalBooks,
+          totalPages,
+          currentPage: page,
+          hasMore: page < totalPages,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     if (method === "GET" && bookId) {
@@ -91,7 +94,7 @@ export default async (req: Request, context: Context) => {
       if (!book) {
         return new Response(JSON.stringify({ error: "Book not found" }), {
           status: 404,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
@@ -116,7 +119,7 @@ export default async (req: Request, context: Context) => {
 
       return new Response(JSON.stringify(transformedBook), {
         status: 200,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -173,7 +176,7 @@ export default async (req: Request, context: Context) => {
 
       return new Response(JSON.stringify(transformedBook), {
         status: 201,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -215,7 +218,7 @@ export default async (req: Request, context: Context) => {
       if (!updatedBook) {
         return new Response(JSON.stringify({ error: "Book not found" }), {
           status: 404,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
@@ -240,7 +243,7 @@ export default async (req: Request, context: Context) => {
 
       return new Response(JSON.stringify(transformedBook), {
         status: 200,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -251,38 +254,43 @@ export default async (req: Request, context: Context) => {
       if (!deletedBook) {
         return new Response(JSON.stringify({ error: "Book not found" }), {
           status: 404,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
-      return new Response(JSON.stringify({ message: "Book deleted successfully" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
-      });
+      return new Response(
+        JSON.stringify({ message: "Book deleted successfully" }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error: any) {
     console.error("Error in books API:", error);
-    
+
     if (error.code === 11000) {
-      return new Response(JSON.stringify({ error: "Book with this ISBN already exists" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
-      });
+      return new Response(
+        JSON.stringify({ error: "Book with this ISBN already exists" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
-    
+
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
 
 export const config: Config = {
-  path: ["/api/books", "/api/books/*"]
+  path: ["/api/books", "/api/books/*"],
 };

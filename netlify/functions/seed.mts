@@ -6,7 +6,7 @@ export default async (req: Request, context: Context) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -124,21 +124,24 @@ export default async (req: Request, context: Context) => {
       }
     }
 
-    return new Response(JSON.stringify({
-      message: `Database seeded with ${addedCount} new books`,
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    return new Response(
+      JSON.stringify({
+        message: `Database seeded with ${addedCount} new books`,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   } catch (error) {
     console.error("Error seeding database:", error);
     return new Response(JSON.stringify({ error: "Failed to seed database" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
 
 export const config: Config = {
-  path: "/api/seed"
+  path: "/api/seed",
 };

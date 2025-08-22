@@ -6,7 +6,7 @@ export default async (req: Request, context: Context) => {
   if (req.method !== "GET") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -30,24 +30,27 @@ export default async (req: Request, context: Context) => {
         ? Math.round(avgRatingResult[0].averageRating * 10) / 10
         : 0;
 
-    return new Response(JSON.stringify({
-      totalBooks,
-      totalAuthors,
-      totalGenres,
-      averageRating,
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    return new Response(
+      JSON.stringify({
+        totalBooks,
+        totalAuthors,
+        totalGenres,
+        averageRating,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   } catch (error) {
     console.error("Error fetching stats:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch stats" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
 
 export const config: Config = {
-  path: "/api/stats"
+  path: "/api/stats",
 };
