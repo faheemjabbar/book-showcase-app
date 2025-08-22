@@ -29,11 +29,14 @@ export interface GoogleBooksResponse {
 class GoogleBooksService {
   private baseUrl = "https://www.googleapis.com/books/v1/volumes";
 
-  async searchBooks(query: string, maxResults = 10): Promise<GoogleBooksResponse> {
+  async searchBooks(
+    query: string,
+    maxResults = 10,
+  ): Promise<GoogleBooksResponse> {
     try {
       const url = `${this.baseUrl}?q=${encodeURIComponent(query)}&maxResults=${maxResults}`;
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch books from Google Books API");
       }
@@ -50,7 +53,7 @@ class GoogleBooksService {
     try {
       const cleanISBN = isbn.replace(/[-\s]/g, "");
       const response = await this.searchBooks(`isbn:${cleanISBN}`, 1);
-      
+
       return response.items?.[0] || null;
     } catch (error) {
       console.error("ISBN search error:", error);
@@ -58,13 +61,16 @@ class GoogleBooksService {
     }
   }
 
-  async searchByTitle(title: string, author?: string): Promise<GoogleBookItem[]> {
+  async searchByTitle(
+    title: string,
+    author?: string,
+  ): Promise<GoogleBookItem[]> {
     try {
       let query = `intitle:${title}`;
       if (author) {
         query += `+inauthor:${author}`;
       }
-      
+
       const response = await this.searchBooks(query, 5);
       return response.items || [];
     } catch (error) {
@@ -75,10 +81,14 @@ class GoogleBooksService {
 
   convertToBookData(googleBook: GoogleBookItem) {
     const { volumeInfo } = googleBook;
-    
+
     // Get ISBN (prefer ISBN-13, fallback to ISBN-10)
-    const isbn13 = volumeInfo.industryIdentifiers?.find(id => id.type === "ISBN_13")?.identifier;
-    const isbn10 = volumeInfo.industryIdentifiers?.find(id => id.type === "ISBN_10")?.identifier;
+    const isbn13 = volumeInfo.industryIdentifiers?.find(
+      (id) => id.type === "ISBN_13",
+    )?.identifier;
+    const isbn10 = volumeInfo.industryIdentifiers?.find(
+      (id) => id.type === "ISBN_10",
+    )?.identifier;
     const isbn = isbn13 || isbn10 || "";
 
     // Format date (Google Books sometimes returns year only)
@@ -95,8 +105,12 @@ class GoogleBooksService {
       genre: volumeInfo.categories?.[0] || "Fiction",
       description: volumeInfo.description || "",
       pages: volumeInfo.pageCount || 0,
-      language: volumeInfo.language === "en" ? "English" : volumeInfo.language || "English",
-      coverImage: volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://") || "",
+      language:
+        volumeInfo.language === "en"
+          ? "English"
+          : volumeInfo.language || "English",
+      coverImage:
+        volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://") || "",
       price: 0, // Google Books API doesn't provide pricing
       inStock: true,
     };

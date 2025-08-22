@@ -3,9 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import type { Book } from "@shared/api";
 
@@ -36,10 +49,15 @@ const genres = [
   "Adventure",
   "Contemporary Fiction",
   "Historical Fiction",
-  "Literary Fiction"
+  "Literary Fiction",
 ];
 
-export default function EditBookModal({ book, isOpen, onClose, onSuccess }: EditBookModalProps) {
+export default function EditBookModal({
+  book,
+  isOpen,
+  onClose,
+  onSuccess,
+}: EditBookModalProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -76,7 +94,7 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!book) return;
-    
+
     setIsLoading(true);
 
     try {
@@ -102,7 +120,8 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update book. Please check your input and try again.",
+        description:
+          "Failed to update book. Please check your input and try again.",
         variant: "destructive",
       });
     } finally {
@@ -111,9 +130,9 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
   };
 
   const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -124,9 +143,7 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Book</DialogTitle>
-          <DialogDescription>
-            Update the book details below.
-          </DialogDescription>
+          <DialogDescription>Update the book details below.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -175,7 +192,10 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
 
             <div className="space-y-2">
               <Label htmlFor="edit-genre">Genre *</Label>
-              <Select value={formData.genre} onValueChange={(value) => handleChange("genre", value)}>
+              <Select
+                value={formData.genre}
+                onValueChange={(value) => handleChange("genre", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a genre" />
                 </SelectTrigger>
@@ -206,7 +226,9 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
                 step="0.01"
                 min="0"
                 value={formData.price}
-                onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleChange("price", parseFloat(e.target.value) || 0)
+                }
                 required
               />
             </div>
@@ -218,7 +240,9 @@ export default function EditBookModal({ book, isOpen, onClose, onSuccess }: Edit
                 type="number"
                 min="1"
                 value={formData.pages}
-                onChange={(e) => handleChange("pages", parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleChange("pages", parseInt(e.target.value) || 0)
+                }
                 required
               />
             </div>

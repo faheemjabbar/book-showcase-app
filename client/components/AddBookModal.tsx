@@ -4,9 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { googleBooksService } from "@/lib/googleBooks";
 import type { CreateBookRequest } from "@shared/api";
@@ -37,10 +50,14 @@ const genres = [
   "Adventure",
   "Contemporary Fiction",
   "Historical Fiction",
-  "Literary Fiction"
+  "Literary Fiction",
 ];
 
-export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModalProps) {
+export default function AddBookModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: AddBookModalProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -82,7 +99,7 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
 
       onSuccess();
       onClose();
-      
+
       // Reset form
       setFormData({
         title: "",
@@ -99,7 +116,8 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add book. Please check your input and try again.",
+        description:
+          "Failed to add book. Please check your input and try again.",
         variant: "destructive",
       });
     } finally {
@@ -108,9 +126,9 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
   };
 
   const handleChange = (field: keyof CreateBookRequest, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -129,7 +147,7 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
       const enrichedData = await googleBooksService.enrichBookData(searchQuery);
 
       if (enrichedData) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           ...enrichedData,
           price: prev.price || 0, // Keep user's price if set
@@ -142,13 +160,15 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
       } else {
         toast({
           title: "No Results",
-          description: "No books found for your search query. You can still add the book manually.",
+          description:
+            "No books found for your search query. You can still add the book manually.",
         });
       }
     } catch (error) {
       toast({
         title: "Search Error",
-        description: "Failed to search for books. You can still add the book manually.",
+        description:
+          "Failed to search for books. You can still add the book manually.",
         variant: "destructive",
       });
     } finally {
@@ -240,7 +260,10 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
 
             <div className="space-y-2">
               <Label htmlFor="genre">Genre *</Label>
-              <Select value={formData.genre} onValueChange={(value) => handleChange("genre", value)}>
+              <Select
+                value={formData.genre}
+                onValueChange={(value) => handleChange("genre", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a genre" />
                 </SelectTrigger>
@@ -271,7 +294,9 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
                 step="0.01"
                 min="0"
                 value={formData.price}
-                onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleChange("price", parseFloat(e.target.value) || 0)
+                }
                 required
               />
             </div>
@@ -283,7 +308,9 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
                 type="number"
                 min="1"
                 value={formData.pages}
-                onChange={(e) => handleChange("pages", parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleChange("pages", parseInt(e.target.value) || 0)
+                }
                 required
               />
             </div>

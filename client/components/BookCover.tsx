@@ -22,7 +22,7 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
         accent: "#E74C3C",
         text: "#FFFFFF",
       },
-      "Romance": {
+      Romance: {
         primary: "#8E44AD",
         secondary: "#C39BD3",
         accent: "#F8C471",
@@ -40,25 +40,25 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
         accent: "#5DADE2",
         text: "#FFFFFF",
       },
-      "Fantasy": {
+      Fantasy: {
         primary: "#4A148C",
         secondary: "#7B1FA2",
         accent: "#BA68C8",
         text: "#FFFFFF",
       },
-      "Mystery": {
+      Mystery: {
         primary: "#212121",
         secondary: "#424242",
         accent: "#FF5722",
         text: "#FFFFFF",
       },
-      "Thriller": {
+      Thriller: {
         primary: "#B71C1C",
         secondary: "#D32F2F",
         accent: "#FFCDD2",
         text: "#FFFFFF",
       },
-      "Horror": {
+      Horror: {
         primary: "#1A1A1A",
         secondary: "#333333",
         accent: "#FF1744",
@@ -87,8 +87,12 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
   }, [book.title]);
 
   // Truncate long titles for better display
-  const displayTitle = book.title.length > 40 ? book.title.substring(0, 37) + "..." : book.title;
-  const displayAuthor = book.author.length > 30 ? book.author.substring(0, 27) + "..." : book.author;
+  const displayTitle =
+    book.title.length > 40 ? book.title.substring(0, 37) + "..." : book.title;
+  const displayAuthor =
+    book.author.length > 30
+      ? book.author.substring(0, 27) + "..."
+      : book.author;
 
   return (
     <div className={`relative w-full h-full ${className}`}>
@@ -99,14 +103,33 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
       >
         <defs>
           {/* Gradient background */}
-          <linearGradient id={`gradient-${patternId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id={`gradient-${patternId}`}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor={colorScheme.primary} />
             <stop offset="100%" stopColor={colorScheme.secondary} />
           </linearGradient>
-          
+
           {/* Subtle pattern overlay */}
-          <pattern id={patternId} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="10" cy="10" r="1" fill={colorScheme.accent} opacity="0.1" />
+          <pattern
+            id={patternId}
+            x="0"
+            y="0"
+            width="20"
+            height="20"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle
+              cx="10"
+              cy="10"
+              r="1"
+              fill={colorScheme.accent}
+              opacity="0.1"
+            />
           </pattern>
         </defs>
 
@@ -118,7 +141,7 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
           rx="8"
           ry="8"
         />
-        
+
         {/* Pattern overlay */}
         <rect
           width="300"
@@ -218,7 +241,7 @@ export default function BookCover({ book, className = "" }: BookCoverProps) {
           strokeWidth="2"
           opacity="0.6"
         />
-        
+
         {/* Bottom accent */}
         <rect
           x="20"

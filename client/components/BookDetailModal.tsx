@@ -1,5 +1,19 @@
-import { Star, Book as BookIcon, Calendar, Globe, DollarSign, FileText, User, Hash } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Star,
+  Book as BookIcon,
+  Calendar,
+  Globe,
+  DollarSign,
+  FileText,
+  User,
+  Hash,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -40,10 +54,10 @@ export default function BookDetailModal({
 
   const formatDate = (dateString: string) => {
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } catch {
       return dateString;
@@ -106,7 +120,7 @@ export default function BookDetailModal({
                 <User className="h-4 w-4" />
                 <span className="text-lg">by {book.author}</span>
               </div>
-              
+
               {/* Genre Badge */}
               <Badge variant="secondary" className="text-sm">
                 {book.genre}
@@ -138,7 +152,9 @@ export default function BookDetailModal({
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Published</p>
-                  <p className="font-medium">{formatDate(book.publishedDate)}</p>
+                  <p className="font-medium">
+                    {formatDate(book.publishedDate)}
+                  </p>
                 </div>
               </div>
 
@@ -191,10 +207,7 @@ export default function BookDetailModal({
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
-              <Button
-                onClick={() => onEdit(book)}
-                className="flex-1"
-              >
+              <Button onClick={() => onEdit(book)} className="flex-1">
                 Edit Book
               </Button>
               <Button
