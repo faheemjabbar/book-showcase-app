@@ -22,17 +22,17 @@ const api = {
       params: Record<string, string> = {},
     ): Promise<BooksResponse> => {
       const queryString = new URLSearchParams(params).toString();
-      const response = await fetch(`/.netlify/functions/books?${queryString}`);
+      const response = await fetch(`/api/books?${queryString}`);
       if (!response.ok) throw new Error("Failed to fetch books");
       return response.json();
     },
     getOne: async (id: string): Promise<Book> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`);
+      const response = await fetch(`/api/books/${id}`);
       if (!response.ok) throw new Error("Failed to fetch book");
       return response.json();
     },
     create: async (formData: FormData): Promise<Book> => {
-      const response = await fetch("/.netlify/functions/books", {
+      const response = await fetch("/api/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const api = {
       return response.json();
     },
     update: async (id: string, formData: FormData): Promise<Book> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`, {
+      const response = await fetch(`/api/books/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const api = {
       return response.json();
     },
     delete: async (id: string): Promise<{ message: string }> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`, {
+      const response = await fetch(`/api/books/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete book");
@@ -63,13 +63,13 @@ const api = {
   },
   stats: {
     get: async (): Promise<StatsResponse> => {
-      const response = await fetch("/.netlify/functions/stats");
+      const response = await fetch("/api/stats");
       if (!response.ok) throw new Error("Failed to fetch stats");
       return response.json();
     },
   },
   seed: async (): Promise<{ message: string }> => {
-    const response = await fetch("/.netlify/functions/seed", {
+    const response = await fetch("/api/seed", {
       method: "POST",
     });
     if (!response.ok) throw new Error("Failed to seed database");
