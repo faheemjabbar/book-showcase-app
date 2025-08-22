@@ -43,6 +43,8 @@ const genres = [
 export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModalProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState<CreateBookRequest>({
     title: "",
     author: "",
