@@ -88,7 +88,26 @@ export const getBookById: RequestHandler = async (req, res) => {
       return res.status(404).json({ error: "Book not found" });
     }
 
-    res.json(book);
+    // Transform MongoDB document to include id field
+    const transformedBook = {
+      id: book._id.toString(),
+      title: book.title,
+      author: book.author,
+      isbn: book.isbn,
+      publishedDate: book.publishedDate,
+      genre: book.genre,
+      description: book.description,
+      price: book.price,
+      pages: book.pages,
+      language: book.language,
+      inStock: book.inStock,
+      rating: book.rating,
+      coverImage: book.coverImage,
+      createdAt: book.createdAt,
+      updatedAt: book.updatedAt,
+    };
+
+    res.json(transformedBook);
   } catch (error) {
     console.error("Error fetching book:", error);
     res.status(500).json({ error: "Failed to fetch book" });
@@ -128,7 +147,27 @@ export const createBook: RequestHandler = async (req, res) => {
     });
 
     const savedBook = await newBook.save();
-    res.status(201).json(savedBook);
+
+    // Transform MongoDB document to include id field
+    const transformedBook = {
+      id: savedBook._id.toString(),
+      title: savedBook.title,
+      author: savedBook.author,
+      isbn: savedBook.isbn,
+      publishedDate: savedBook.publishedDate,
+      genre: savedBook.genre,
+      description: savedBook.description,
+      price: savedBook.price,
+      pages: savedBook.pages,
+      language: savedBook.language,
+      inStock: savedBook.inStock,
+      rating: savedBook.rating,
+      coverImage: savedBook.coverImage,
+      createdAt: savedBook.createdAt,
+      updatedAt: savedBook.updatedAt,
+    };
+
+    res.status(201).json(transformedBook);
   } catch (error) {
     console.error("Error creating book:", error);
     if (error.code === 11000) {
@@ -181,7 +220,26 @@ export const updateBook: RequestHandler = async (req, res) => {
       return res.status(404).json({ error: "Book not found" });
     }
 
-    res.json(updatedBook);
+    // Transform MongoDB document to include id field
+    const transformedBook = {
+      id: updatedBook._id.toString(),
+      title: updatedBook.title,
+      author: updatedBook.author,
+      isbn: updatedBook.isbn,
+      publishedDate: updatedBook.publishedDate,
+      genre: updatedBook.genre,
+      description: updatedBook.description,
+      price: updatedBook.price,
+      pages: updatedBook.pages,
+      language: updatedBook.language,
+      inStock: updatedBook.inStock,
+      rating: updatedBook.rating,
+      coverImage: updatedBook.coverImage,
+      createdAt: updatedBook.createdAt,
+      updatedAt: updatedBook.updatedAt,
+    };
+
+    res.json(transformedBook);
   } catch (error) {
     console.error("Error updating book:", error);
     if (error.code === 11000) {
