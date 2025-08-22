@@ -1,8 +1,9 @@
-import { Star, Eye, Edit, Trash2, Book } from "lucide-react";
+import { Star, Eye, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import BookCover from "@/components/BookCover";
 import type { Book as BookType } from "@shared/api";
 
 interface BookCardProps {
