@@ -114,6 +114,48 @@ export default function AddBookModal({ isOpen, onClose, onSuccess }: AddBookModa
     }));
   };
 
+  const handleSearchBooks = async () => {
+    if (!searchQuery.trim()) {
+      toast({
+        title: "Search Query Required",
+        description: "Please enter a book title, author, or ISBN to search.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const enrichedData = await googleBooksService.enrichBookData(searchQuery);
+
+      if (enrichedData) {
+        setFormData(prev => ({
+          ...prev,
+          ...enrichedData,
+          price: prev.price || 0, // Keep user's price if set
+        }));
+
+        toast({
+          title: "Book Found!",
+          description: `Successfully found "${enrichedData.title}" by ${enrichedData.author}`,
+        });
+      } else {
+        toast({
+          title: "No Results",
+          description: "No books found for your search query. You can still add the book manually.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Search Error",
+        description: "Failed to search for books. You can still add the book manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
