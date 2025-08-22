@@ -210,6 +210,25 @@ export default function Index() {
     refetchStats();
   };
 
+  const handleModalSuccess = () => {
+    refetchBooks();
+    refetchStats();
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedBook(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedBook(null);
+  };
+
   // Loading state
   if (booksLoading && statsLoading && isConnected === null) {
     return (
