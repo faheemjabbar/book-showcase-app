@@ -1,8 +1,9 @@
-import { Star, Eye, Edit, Trash2, Book } from "lucide-react";
+import { Star, Eye, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import BookCover from "@/components/BookCover";
 import type { Book as BookType } from "@shared/api";
 
 interface BookCardProps {
@@ -36,7 +37,7 @@ export default function BookCard({
     <Card className="group h-full border-0 shadow-elegant hover:shadow-elegant-lg transition-all duration-300 hover:-translate-y-1 bg-gradient-surface">
       <CardContent className="p-0">
         {/* Book Cover */}
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl">
           {book.coverImage ? (
             <img
               src={book.coverImage}
@@ -44,16 +45,17 @@ export default function BookCard({
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <Book className="h-12 w-12 text-muted-foreground" />
-            </div>
+            <BookCover
+              book={book}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
           )}
 
           {/* Stock Badge */}
           <Badge
             variant={book.inStock ? "default" : "destructive"}
             className={cn(
-              "absolute top-3 right-3 text-xs",
+              "absolute top-3 right-3 text-xs z-10",
               book.inStock
                 ? "bg-success text-success-foreground"
                 : "bg-destructive text-destructive-foreground",

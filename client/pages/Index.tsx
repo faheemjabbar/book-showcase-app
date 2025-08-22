@@ -9,6 +9,9 @@ import SearchFilters from "@/components/SearchFilters";
 import BookCard from "@/components/BookCard";
 import EmptyState from "@/components/EmptyState";
 import LoadingState from "@/components/LoadingState";
+import AddBookModal from "@/components/AddBookModal";
+import BookDetailModal from "@/components/BookDetailModal";
+import EditBookModal from "@/components/EditBookModal";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,17 +25,17 @@ const api = {
       params: Record<string, string> = {},
     ): Promise<BooksResponse> => {
       const queryString = new URLSearchParams(params).toString();
-      const response = await fetch(`/.netlify/functions/books?${queryString}`);
+      const response = await fetch(`/api/books?${queryString}`);
       if (!response.ok) throw new Error("Failed to fetch books");
       return response.json();
     },
     getOne: async (id: string): Promise<Book> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`);
+      const response = await fetch(`/api/books/${id}`);
       if (!response.ok) throw new Error("Failed to fetch book");
       return response.json();
     },
     create: async (formData: FormData): Promise<Book> => {
-      const response = await fetch("/.netlify/functions/books", {
+      const response = await fetch("/api/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +46,7 @@ const api = {
       return response.json();
     },
     update: async (id: string, formData: FormData): Promise<Book> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`, {
+      const response = await fetch(`/api/books/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +57,7 @@ const api = {
       return response.json();
     },
     delete: async (id: string): Promise<{ message: string }> => {
-      const response = await fetch(`/.netlify/functions/books/${id}`, {
+      const response = await fetch(`/api/books/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete book");
@@ -63,13 +66,13 @@ const api = {
   },
   stats: {
     get: async (): Promise<StatsResponse> => {
-      const response = await fetch("/.netlify/functions/stats");
+      const response = await fetch("/api/stats");
       if (!response.ok) throw new Error("Failed to fetch stats");
       return response.json();
     },
   },
   seed: async (): Promise<{ message: string }> => {
-    const response = await fetch("/.netlify/functions/seed", {
+    const response = await fetch("/api/seed", {
       method: "POST",
     });
     if (!response.ok) throw new Error("Failed to seed database");
@@ -82,6 +85,10 @@ export default function Index() {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const { toast } = useToast();
 
   // Query for books
@@ -165,27 +172,17 @@ export default function Index() {
   };
 
   const handleAddBook = () => {
-    // TODO: Open add book modal
-    toast({
-      title: "Coming Soon",
-      description: "Add book functionality will be implemented next.",
-    });
+    setIsAddModalOpen(true);
   };
 
   const handleViewBook = async (book: Book) => {
-    // TODO: Open book detail modal
-    toast({
-      title: "Book Details",
-      description: `Viewing "${book.title}" by ${book.author}`,
-    });
+    setSelectedBook(book);
+    setIsDetailModalOpen(true);
   };
 
   const handleEditBook = (book: Book) => {
-    // TODO: Open edit book modal
-    toast({
-      title: "Edit Book",
-      description: `Editing "${book.title}"`,
-    });
+    setSelectedBook(book);
+    setIsEditModalOpen(true);
   };
 
   const handleDeleteBook = async (id: string) => {
@@ -211,6 +208,25 @@ export default function Index() {
   const handleRetryConnection = () => {
     refetchBooks();
     refetchStats();
+  };
+
+  const handleModalSuccess = () => {
+    refetchBooks();
+    refetchStats();
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedBook(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedBook(null);
   };
 
   // Loading state
@@ -355,6 +371,28 @@ export default function Index() {
           </section>
         )}
       </main>
+
+      {/* Modals */}
+      <AddBookModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSuccess={handleModalSuccess}
+      />
+
+      <BookDetailModal
+        book={selectedBook}
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+        onEdit={handleEditBook}
+        onDelete={handleDeleteBook}
+      />
+
+      <EditBookModal
+        book={selectedBook}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }
